@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <title>Hydrogrow</title>
+        <link rel="stylesheet" media="screen" type="text/css" href="css/style.css" />
+    </head>
+ 
+    <body>
+        
+        <center>
+            <h1>Hydrogrow</h1>
+            <div id="contenedor_1">
+                
+                <table>
+                    <tr>
+                        <td>Modo Iluminación</td>
+                        <td>
+                            <div class="can-toggle demo-rebrand-1 blue">
+                                <input id="modo_iluminacion" type="checkbox">
+                                <label for="modo_iluminacion">
+                                    <div class="can-toggle__switch" data-checked="Automatico" data-unchecked="Manual"></div>
+                                </label>
+                            </div>
+                        </td>
+                        <td>
+                            Horas de sueño
+                        </td>
+                        <td>
+                            <input type="time" name="time" placeholder="hrs:mins" pattern="^([0-1]?[0-9]|2[0-4]):([0-5][0-9])(:[0-5][0-9])?$" class="inputs time" required>
+                        </td>
+                        <td>
+                            Hora de dormir
+                        </td>
+                        <td>
+                            <input type="time" name="time" placeholder="hrs:mins" pattern="^([0-1]?[0-9]|2[0-4]):([0-5][0-9])(:[0-5][0-9])?$" class="inputs time" required>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Iluminación</td>
+                        <td>
+                            <div class="can-toggle demo-rebrand-1 red">
+                                <input id="iluminacion" type="checkbox">
+                                <label for="iluminacion">
+                                    <div class="can-toggle__switch" data-checked="Encendido" data-unchecked="Apagado"></div>
+                                </label>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Modo ventilación</td>
+                        <td>
+                            <!--<input type="button" value="Automatico" id="ventilacion_automatico" /><input type="button" value="Manual" id="ventilacion_manual" />-->
+                            <div class="can-toggle demo-rebrand-1 blue">
+                                <input id="modo_ventilacion" type="checkbox">
+                                <label for="modo_ventilacion">
+                                    <div class="can-toggle__switch" data-checked="Automatico" data-unchecked="Manual"></div>
+                                </label>
+                            </div>
+                        </td>
+                        <td>
+                            Cada 
+                            
+                        </td>
+                        <td>
+                            <input type="number" min="0" size="2">
+                        </td>
+                        <td>
+                            <select name="select">
+                                <option value="minutos" selected>Minutos</option>
+                                <option value="horas">Horas</option>
+                            </select>
+                        </td>
+                        <td>
+                            Temperatura
+                        </td>
+                        <td>
+                            <select name="select">
+                                <option value=">" selected>></option>
+                                <option value="=" selected>=</option>
+                                <option value=">=">>=</option>
+                            </select>
+                        </td>
+                        <td>
+                            <input type="number" min="0" size="2">
+                            °C
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Ventilación</td>
+                        <td>
+                            <div class="can-toggle demo-rebrand-1 red">
+                                <input id="ventilacion" type="checkbox">
+                                <label for="ventilacion">
+                                    <div class="can-toggle__switch" data-checked="Encendido" data-unchecked="Apagado"></div>
+                                </label>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Puerta</td>
+                        <td>
+                            <div class="can-toggle demo-rebrand-1 red">
+                                <input id="puerta" type="checkbox">
+                                <label for="puerta">
+                                    <div class="can-toggle__switch" data-checked="Abrir" data-unchecked="Cerrado"></div>
+                                </label>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Temperatura</td>
+                        <td class="data" id="temperatura"> </td>
+                    </tr>
+                    <tr>
+                        <td>Humedad</td>
+                        <td class="data" id="humedad"> </td>
+                    </tr>
+                    <tr>
+                        <td>pH</td>
+                        <td class="data" id="pH"> </td>
+                    </tr>
+                    <tr>
+                        <td>LDR inferior</td>
+                        <td class="data" id="LDR_inferior"> </td>
+                    </tr>
+                    <tr>
+                        <td>LDR superior</td>
+                        <td class="data" id="LDR_superior"> </td>
+                    </tr>
+                </table>
+                
+           </div>
+        </center>
+	    <script src="/jquery/dist/jquery.js"></script>
+        <script src="/socket.io/socket.io.js"></script>
+        <script>
+            var socket = io.connect('http://192.168.0.180:4200');
+
+            // The visitor is asked for their username...
+            //var username = prompt('What\'s your username?');
+            
+            // It's sent with the signal "little_newbie" (to differentiate it from "message")
+            //socket.emit('little_newbie', username);
+
+            // A dialog box is displayed when the server sends us a "message"
+            socket.on('message', function(message) {
+                alert('The server has a message for you: ' + message);
+            })
+
+            // When the button is clicked, a "message" is sent to the server
+           
+            $('#modo_iluminacion').click(function (event) {
+                if (this.checked) {
+                    socket.emit('modo_iluminacion', 'Automatico');
+                    document.getElementById("iluminacion").disabled = true;
+                }else{
+                    socket.emit('modo_iluminacion', 'Manual');
+                    document.getElementById("iluminacion").disabled = false;
+                }
+            })
+            $('#iluminacion').click(function (event) {
+                if (this.checked) {
+                    socket.emit('iluminacion', 'HIGH');
+                }else{
+                    socket.emit('iluminacion', 'LOW');
+                }
+                
+            })
+            $('#modo_ventilacion').click(function (event) {
+                if (this.checked) {
+                    socket.emit('modo_ventilacion', 'Automatico');
+                    document.getElementById("ventilacion").disabled = true;
+                }else{
+                    socket.emit('modo_ventilacion', 'Manual');
+                    document.getElementById("ventilacion").disabled = false;
+                }
+                
+            })
+            $('#ventilacion').click(function (event) {
+                if (this.checked) {
+                    socket.emit('ventilacion', 'HIGH');
+                }else{
+                    socket.emit('ventilacion', 'LOW');
+                }
+                
+            })
+            $('#puerta').click(function (event) {
+                if (this.checked) {
+                    socket.emit('door', 'open');
+                }else{
+                    socket.emit('door', 'close');
+                }
+                
+            })
+
+
+            
+            socket.on('temperatura', function(message) {
+                document.getElementById("temperatura").innerHTML = message+" °";
+            })             
+            socket.on('humedad', function(message) {
+                document.getElementById("humedad").innerHTML = message+" %";
+            })
+            socket.on('pH', function(message) {
+                document.getElementById("pH").innerHTML = message;
+            })
+	        socket.on('LDR_inferior', function(message) {
+                document.getElementById("LDR_inferior").innerHTML = message;
+            })
+	        socket.on('LDR_superior', function(message) {
+                document.getElementById("LDR_superior").innerHTML = message;
+                if(message >= 300 && document.getElementById("modo_iluminacion").checked == true){
+                    document.getElementById("iluminacion").checked = true;
+                }else if(document.getElementById("modo_iluminacion").checked == true){
+                    document.getElementById("iluminacion").checked = false;
+                }
+            })
+	        socket.on('ventilador_derecho', function(message) {
+                if(message == 1 && document.getElementById("modo_ventilacion").checked == true){
+                    document.getElementById("ventilacion").checked = true;
+                }else if(document.getElementById("modo_ventilacion").checked == true){
+                    document.getElementById("ventilacion").checked = false;
+                }
+            })
+	        socket.on('ventilador_izquierdo', function(message) {
+                document.getElementById("ventilador_izquierdo").innerHTML = message;
+            })
+	        socket.on('puerta', function(message) {
+                if(message == 1 && document.getElementById("puerta").checked == true){
+                    document.getElementById("puerta").disabled = true;
+                }
+                if(message == 0 && document.getElementById("puerta").checked == true){
+                    document.getElementById("puerta").disabled = false;
+                    document.getElementById("puerta").checked = false;
+                }
+                if(message == 1 && document.getElementById("puerta").checked == false){
+                    document.getElementById("puerta").disabled = false;
+                    document.getElementById("puerta").checked = true;
+                }
+                
+            })
+            socket.on('modo_ventilacion', function(message) {
+                if(message=="Automatico"){
+                    document.getElementById("modo_ventilacion").checked = true;
+                    document.getElementById("ventilacion").disabled = true;
+                }else{
+                    document.getElementById("modo_ventilacion").checked = false;
+                    document.getElementById("ventilacion").disabled = false;
+                }
+                
+            })
+            socket.on('modo_iluminacion', function(message) {
+                if(message=="Automatico"){
+                    document.getElementById("modo_iluminacion").checked = true;
+                    document.getElementById("iluminacion").disabled = true;
+                }else{
+                    document.getElementById("modo_iluminacion").checked = false;
+                    document.getElementById("iluminacion").disabled = false;
+                }
+            })
+
+        </script>
+    </body>
+</html>
